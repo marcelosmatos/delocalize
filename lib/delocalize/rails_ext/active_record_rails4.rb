@@ -13,19 +13,21 @@ ActiveRecord::ConnectionAdapters::Column.class_eval do
 
   alias_method_chain :type_cast, :localization
   
+  
   def type_cast_for_write_with_localization(value)
     if number? && I18n.delocalization_enabled?
       old_value = value
       value = Numeric.parse_localized(value)
-      # if type == :integer
+      if type == :integer
+      #   # value = is_integer?(value) ? value.to_i : old_value
       #   begin
-      #     value = Integer(i) 
+      #     value = Integer(value) 
       #   rescue 
       #     value = old_value 
       #   end
-      # else
-      #   value = is_float?(value) ? value.to_f : old_value
-      # end
+      else
+        value = is_float?(value) ? value.to_f : old_value
+      end
       value
     end
     type_cast_for_write_without_localization(value)
@@ -33,9 +35,8 @@ ActiveRecord::ConnectionAdapters::Column.class_eval do
 
   alias_method_chain :type_cast_for_write, :localization
   
-  # def is_float?(fl)
-  #   !!Float(fl) rescue false
-  # end
+  def is_float?(fl)
+    !!Float(fl) rescue false
+  end
   
-
 end
